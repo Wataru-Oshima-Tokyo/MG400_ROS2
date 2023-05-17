@@ -12,14 +12,14 @@
 #define CONVERT_H
 
 #include "rclcpp/rclcpp.hpp"
-#include <sensor_msgs/JointState.h>
+#include <sensor_msgs/msg/joint_state.h>
 
 class Convert
 {
 public:
     static sensor_msgs::JointStatePtr toJointState(double j1, double j2, double j3, double j4)
     {
-        sensor_msgs::JointStatePtr ptr = boost::shared_ptr<sensor_msgs::JointState>(new sensor_msgs::JointState());
+        sensor_msgs::JointStatePtr ptr = boost::shared_ptr<sensor_msgs::msg::JointState>(new sensor_msgs::msg::JointState());
 
         ptr->header.stamp = ros::Time::now();
         ptr->name.push_back("j1");
