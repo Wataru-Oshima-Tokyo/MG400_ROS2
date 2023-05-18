@@ -1,0 +1,8 @@
+#goal definition
+mg400_msgs/ToolVectorActual pose
+---
+#result definition
+bool result
+---
+#feedback definition
+mg400_msgs/ToolVectorActual current_pose

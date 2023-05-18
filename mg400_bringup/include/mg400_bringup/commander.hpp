@@ -19,9 +19,9 @@
 #include <memory>
 #include <thread>
 #include <mutex>
+#include <chrono>
 #include <cstring>
-#include <mg400_bringup/tcp_socket.h>
-
+#include <mg400_bringup/tcp_socket.hpp>
 #pragma pack(push, 1)
 // 数据 按照 8 字节 以及  48 字节对齐的模式,
 // 大小设计为  30 * 8 * 6 = 30 *6*sizeof(double) = 30 * sizeof(double)
@@ -137,14 +137,13 @@ public:
                         for (uint32_t i = 0; i < 6; i++){
                             current_joint_[i] = deg2Rad(real_time_data_.q_actual[i]);
                         }
-                        // ROS_INFO_STREAM("get the feedback");
 
                         memcpy(tool_vector_, real_time_data_.tool_vector_actual, sizeof(tool_vector_));
                         mutex_.unlock();
                     }
                     else
                     {
-                        ROS_WARN("tcp recv timeout. Length: %d", real_time_data_.len);
+                        printf("tcp recv timeout. Length: %d\n", real_time_data_.len);
                     }
                 }
                 else
@@ -157,15 +156,15 @@ public:
                     }
                     catch (const TcpClientException& err)
                     {
-                        ROS_ERROR("tcp recv error : %s", err.what());
-                        sleep(3);
+                        printf("tcp recv error : %s\n", err.what());
+                        std::this_thread::sleep_for(std::chrono::seconds(3));
                     }
                 }
             }
             catch (const TcpClientException& err)
             {
                 dash_board_tcp_->disConnect();
-                ROS_ERROR("tcp recv error : %s", err.what());
+                printf("tcp recv error : %s\n", err.what());
             }
         }
     }
@@ -179,7 +178,7 @@ public:
         }
         catch (const TcpClientException& err)
         {
-            ROS_ERROR("Commander : %s", err.what());
+            printf("Commander : %s\n", err.what());
         }
     }
 

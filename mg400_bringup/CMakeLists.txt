@@ -17,9 +17,31 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(mg400_msgs REQUIRED)
+find_package(rclcpp_action REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+
+add_executable(mg400_node 
+      src/robot.cpp
+      src/main.cpp
+      src/tcp_socket.cpp
+      )
+ament_target_dependencies(mg400_node
+  geometry_msgs
+  rclcpp
+  rclcpp_action
+  mg400_msgs
+  geometry_msgs
+  std_srvs
+  )
+# target_link_libraries(mg400_station ${PROJECT_NAME})
+target_include_directories(
+  mg400_node PRIVATE include)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -32,4 +54,15 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+install(TARGETS
+  mg400_node
+  DESTINATION lib/${PROJECT_NAME})
+
+install(
+  DIRECTORY
+    include
+    # launch
+  DESTINATION
+    share/${PROJECT_NAME}/
+)
 ament_package()
