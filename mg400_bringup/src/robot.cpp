@@ -14,20 +14,41 @@
 #include <functional>
 #include <memory>
 
+// MG400Robot::MG400Robot(std::shared_ptr<rclcpp::Node> node, std::string name)
+//     : Node("mg400_action_server"), node_(node), 
+//     action_server_(rclcpp_action::create_server<control_msgs::action::FollowJointTrajectory>(
+//             this,
+//             "mg400_server",
+//             std::bind(&MG400Robot::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
+//             std::bind(&MG400Robot::handle_cancel, this, std::placeholders::_1),
+//             std::bind(&MG400Robot::handle_cancel, this, std::placeholders::_1)
+//             )),
+//       goal_{}, trajectory_duration_(1.0)
+// {
+//     index_ = 0;
+//     memset(goal_, 0, sizeof(goal_));
+// }
+
 MG400Robot::MG400Robot(std::shared_ptr<rclcpp::Node> node, std::string name)
-    : Node("mg400_action_server"), node_(node), 
+    : Node("mg400_action_server"), node_(node), goal_{}, trajectory_duration_(1.0),
     action_server_(rclcpp_action::create_server<control_msgs::action::FollowJointTrajectory>(
-            this,
+            this->get_node_base_interface(),
+            this->get_node_clock_interface(),
+            this->get_node_logging_interface(),
+            this->get_node_waitables_interface(),
             "mg400_server",
             std::bind(&MG400Robot::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
             std::bind(&MG400Robot::handle_cancel, this, std::placeholders::_1),
-            std::bind(&MG400Robot::handle_cancel, this, std::placeholders::_1)
-            )),
-      goal_{}, trajectory_duration_(1.0)
+            std::bind(&MG400Robot::handle_accepted, this, std::placeholders::_1)
+            ))
+      
 {
     index_ = 0;
     memset(goal_, 0, sizeof(goal_));
 }
+
+
+
 
 MG400Robot::~MG400Robot()
 {
@@ -100,9 +121,6 @@ void MG400Robot::init()
 
 
 
-    timer_ = node_->create_wall_timer(
-        rclcpp::Duration::from_seconds(1.0 / 20.0), 
-        std::bind(&MG400Robot::feedbackHandle, this));
 }
 
 // You need to implement the new goal, cancel and accepted handle functions for ROS 2

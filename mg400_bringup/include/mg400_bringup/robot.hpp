@@ -294,12 +294,9 @@ protected:
 
 
 private:
-    void feedbackHandle(
-                        rclcpp_action::ServerGoalHandle<control_msgs::action::FollowJointTrajectory> handle);
-    void handle_accepted(
-                  const  rclcpp_action::ServerGoalHandle<control_msgs::action::FollowJointTrajectory> handle);
-    rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID & uuid,
-        rclcpp_action::ServerGoalHandle<control_msgs::action::FollowJointTrajectory> handle);
-    rclcpp_action::CancelResponse  handle_cancel(rclcpp_action::ServerGoalHandle<control_msgs::action::FollowJointTrajectory> handle);
-
+    void feedbackHandle(std::shared_ptr<const control_msgs::action::FollowJointTrajectory::Feedback> handle);
+    rclcpp_action::GoalResponse handle_goal(const std::array<unsigned char, 16>& uuid,
+        std::shared_ptr<const control_msgs::action::FollowJointTrajectory::Goal> handle);
+    rclcpp_action::CancelResponse  handle_cancel(std::shared_ptr<rclcpp_action::ServerGoalHandle<control_msgs::action::FollowJointTrajectory>> handle);
+    void handle_accepted(std::shared_ptr<rclcpp_action::ServerGoalHandle<control_msgs::action::FollowJointTrajectory>> handle);
 };
